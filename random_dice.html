@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>Random Dice 累積卡片計算</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 40px;
+      background-color: #f0f8ff;
+    }
+    h1 {
+      color: #333;
+    }
+    input {
+      padding: 8px;
+      font-size: 16px;
+    }
+    button {
+      padding: 8px 12px;
+      font-size: 16px;
+      margin-left: 8px;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #222;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎲 Random Dice 累積卡片計算器</h1>
+  <label for="round">請輸入回合數：</label>
+  <input type="number" id="round" min="1">
+  <button onclick="calculate()">計算卡片</button>
+  <div id="result"></div>
+
+  <script>
+    function getCardAmount(round) {
+      if (round <= 110) return { small: 2, big: 6 };
+      if (round <= 500) return { small: 4, big: 12 };
+      if (round <= 1000) return { small: 6, big: 18 };
+      if (round <= 1500) return { small: 8, big: 24 };
+      return { small: 10, big: 30 };
+    }
+
+    function isBoss(round) {
+      if (round <= 45) {
+        return round % 5 === 0;
+      } else {
+        return (round - 46) % 2 === 1;
+      }
+    }
+
+    function calculate() {
+      const roundInput = parseInt(document.getElementById("round").value);
+      const result = document.getElementById("result");
+
+      if (isNaN(roundInput) || roundInput < 1) {
+        result.innerHTML = "❌ 請輸入正確的回合數（大於 0）";
+        return;
+      }
+
+      let totalSmall = 0;
+      let totalBig = 0;
+
+      for (let i = 1; i <= roundInput; i++) {
+        const card = getCardAmount(i);
+        if (isBoss(i)) {
+          totalBig += card.big;
+        } else {
+          totalSmall += card.small;
+        }
+      }
+
+      result.innerHTML = `
+        📊 累積至第 <strong>${roundInput}</strong> 回合：<br>
+        🔹 小卡（小怪）：<strong>${totalSmall}</strong> 張<br>
+        🔸 大卡（Boss）：<strong>${totalBig}</strong> 張<br>
+        🧾 總卡片數：<strong>${totalSmall + totalBig}</strong> 張
+      `;
+    }
+  </script>
+</body>
+</html>
